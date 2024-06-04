@@ -1,0 +1,1 @@
+rich # for coloured terminal output
