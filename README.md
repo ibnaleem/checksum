@@ -1,5 +1,5 @@
 # checksum
-A Python script to verify hash checksums of files.
+A Python script to verify hashes of files.
 
 ## Usage
 ```
