@@ -1,4 +1,5 @@
-import re, hashlib
+import re, sys, hashlib
+from rich.console import Console
 
 def identify_hash(s: str) -> str:
     """
@@ -57,18 +58,30 @@ def calculate_hash(file_path: str, hash_type: str) -> str:
             file_hash.update(chunk)
     return file_hash.hexdigest()
 
+def main():
+    console = Console()
+    if (len(sys.argv) -1) > 2:
+        console.print("[bold red]Too many args\nUsage: python3 checksum.py /path/to/file hash_value[/bold red]")
+    elif (len(sys.argv) -1) < 2:
+        console.print("[bold red]Too few args\nUsage: python3 checksum.py /path/to/file hash_value[/bold red]")
+    else:
+        file_path = sys.argv[1]
+        hash_value = sys.argv[2]
+        try:
+            hash_type = identify_hash(hash_value)
+            console.print(f"[bold green]Using {hash_type.upper()} Algorithm...[/bold green]")
+            checksum = calculate_hash(file_path, hash_type)
+            if checksum == hash_value:
+                out = f"[bold green]File hash is authentic\nProvided hash: {hash_value}\nCalculated hash: {checksum}[/bold green]"
+            else:
+                out = f"[bold red]File hash IS NOT authentic\nProvided hash: {hash_value}\nCalculated hash: {checksum}[/bold red]"
+            console.print(out)
+        except FileNotFoundError:
+            print("File not found!")
+        except IsADirectoryError:
+            print("Given path is a directory, please provide a file path.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+    
 if __name__ == "__main__":
-
-    file_path = input("Enter path to file: ")
-    file_path = file_path.strip('"')
-    s = input("Enter hash: ")
-    try:
-        hash_type = identify_hash(s)
-        checksum = calculate_hash(file_path, hash_type)
-        print(s == checksum)
-    except FileNotFoundError:
-        print("File not found!")
-    except IsADirectoryError:
-        print("Given path is a directory, please provide a file path.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    main()
