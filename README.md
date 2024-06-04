@@ -1,10 +1,10 @@
 # checksum
-A Python script to verify SHA256 checksums of files.
+A Python script to verify hash checksums of files.
 
 ## Usage
 ```
 python3 checksum.py
 Enter the path of the file:
-Enter checksum:
+Enter hash:
 Output: True/False
 ```
