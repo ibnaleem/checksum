@@ -1,10 +1,14 @@
 # checksum
-A Python script to verify hashes of files.
+A Python script to verify file hashes
 
+## Installation
+```
+git clone https://github.com/ibnaleem/checksum.git
+```
+```
+pip install -r requirements.txt
+```
 ## Usage
 ```
-python3 checksum.py
-Enter the path of the file:
-Enter hash:
-Output: True/False
+python3 checksum.py /path/to/file provided_hash
 ```
