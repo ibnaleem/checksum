@@ -1,5 +1,5 @@
 # checksum
-A Python script to verify file hashes
+A Python script for verifying file hashes
 
 ## Installation
 ```
