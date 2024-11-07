@@ -1,16 +1,16 @@
 # checksum
-A Python script for verifying file hashes
+File checksum verification tool written in Go.
 
 ## Installation
 ```
-git clone https://github.com/ibnaleem/checksum.git
+$ git clone https://github.com/ibnaleem/checksum.git
 ```
 ```
-pip install -r requirements.txt
+$ go build
 ```
 ## Usage
 ```
-python3 checksum.py /path/to/file provided_hash
+$ checksum checksum <file_path> <hash>
 ```
 
 ## Hashing Algorithms
