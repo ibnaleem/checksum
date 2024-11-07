@@ -1,13 +1,15 @@
 package main
 
 import (
-	"crypto"
 	"fmt"
 	"os"
 	"strings"
 	"hash"
 	"encoding/hex"
-	"crypto/sha256" // https://github.com/Kong/go-srp/issues/1
+	"crypto/sha256"
+	"crypto/md5"
+	"crypto/sha1"
+	"crypto/sha512"
 )
 
 var Reset = "\033[0m" 
@@ -47,17 +49,17 @@ func CalculateFileHash(filePath string, hashType string) (string, error) {
 
 	switch hashType {
 	case "md5":
-		h = crypto.MD5.New()
+		h = md5.New()
 	case "sha1":
-		h = crypto.SHA1.New()
+		h = sha1.New()
 	case "sha224":
-		h = crypto.SHA224.New()
+		h = sha256.New224()
 	case "sha256":
 		h = sha256.New()
 	case "sha384":
-		h = crypto.SHA384.New()
+		h = sha512.New384()
 	case "sha512":
-		h = crypto.SHA512.New()
+		h = sha512.New()
 	default:
 		return "", fmt.Errorf("unsupported hash type: %s", hashType)
 	}
