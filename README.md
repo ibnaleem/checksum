@@ -10,7 +10,7 @@ $ go build
 ```
 ## Usage
 ```
-$ checksum checksum <file_path> <hash>
+$ checksum <file_path> <hash>
 ```
 
 ## Hashing Algorithms
