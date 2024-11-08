@@ -72,7 +72,8 @@ func CalculateFileHash(filePath string, hashType string) (string, error) {
 
 func main() {
 	if len(os.Args) < 3 {
-		fmt.Println(Yellow + "Usage: checksum <file_path> <hash>" + Reset)
+		fmt.Println(Red + "Usage: checksum <file_path> <hash>" + Reset)
+		fmt.Println(Red + "Issues @ https://github.com/ibnaleem/checksum/issues" + Reset)
 		os.Exit(1)
 	} else {
 		filePath := os.Args[1]
