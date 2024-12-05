@@ -96,7 +96,7 @@ func main() {
 				fmt.Println(Green + "Provided hash: " + hashValue)
 				fmt.Println(Green + "Calculated hash: " + calculatedHash + Reset)
 			} else {
-				fmt.Printf(Red + "Checksum does not match for %s using %s algorithm!\n", filePath, hashType)
+				fmt.Printf(Red + "Checksum does not match for %s using %s algorithm!\n", filePath, strings.ToUpper(hashType))
 				fmt.Println(Red + "Provided hash: " + hashValue)
 				fmt.Println(Red + "Calculated hash: " + calculatedHash + Reset)
 			}
