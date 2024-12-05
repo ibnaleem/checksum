@@ -98,7 +98,7 @@ func main() {
 			} else {
 				fmt.Printf(Red + "Checksum does not match for %s using %s algorithm!\n", filePath, hashType)
 				fmt.Println(Red + "Provided hash: " + hashValue)
-				fmt.Println(Red + "Calculated hash: " + calculatedHash)
+				fmt.Println(Red + "Calculated hash: " + calculatedHash + Reset)
 			}
 		}
 	}
