@@ -1,14 +1,23 @@
 > [!WARNING]
-> This branch is deprecated. Use the [`main` branch](https://github.com/ibnaleem/checksum) (rewritten in Go) for the latest release, which offers better performance, especially with large files like .iso. Issues will be prioritised on the [`main` branch](https://github.com/ibnaleem/checksum).
+> This branch is deprecated. Use the [`main` branch](https://github.com/ibnaleem/checksum) (rewritten in Rust) for the latest release, which offers better performance, especially with large files like `.iso`. Issues will be prioritised on the [`main` branch](https://github.com/ibnaleem/checksum).
 # checksum
-A Python script for verifying file hashes
+A Python script for verifying file hashes.
 
 ## Installation
 ```
-git clone https://github.com/ibnaleem/checksum.git
+$ git clone https://github.com/ibnaleem/checksum.git
 ```
+For Unix:
 ```
-pip install -r requirements.txt
+$ python3 -m venv myvenv
+$ source myvenv/bin/activate
+$ (venv) pip install -r requirements.txt
+```
+For Windows:
+```
+$ python3 -m venv myvenv
+$ myvenv\Scripts\activate
+$ (venv) pip install -r requirements.txt
 ```
 ## Usage
 ```
