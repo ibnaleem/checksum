@@ -1,3 +1,4 @@
+![BUILD](https://github.com/ibnaleem/checksum/actions/workflows/rust.yml/badge.svg?event=push)
 # checksum
 File checksum verification tool written in Rust.
 
