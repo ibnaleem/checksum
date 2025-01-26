@@ -75,7 +75,6 @@ fn main() {
     let filepath = args[1].clone();
     let hash = args[2].clone();
     let hash_type = identify_hash(&hash);
-    let hash_result = calculate_hash(&hash_type, &filepath);
     
     println!("{} {} {} {} {}", 
         "Using".yellow(), 
@@ -84,6 +83,8 @@ fn main() {
         &filepath.yellow(), 
         "...".yellow()
     );
+
+    let hash_result = calculate_hash(&hash_type, &filepath);
 
     match hash_result {
         Ok(result) => {
