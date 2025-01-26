@@ -38,7 +38,7 @@ fn identify_hash(hash: &String) -> String {
 fn calculate_hash(hash_type: &String, filepath: &String) -> Result<String, Box<dyn std::error::Error>> {
     let file = File::open(filepath)?;
     let mut reader = BufReader::new(file);
-    let mut buffer = [0; 4096];
+    let mut buffer = [0; 1048576];
 
     let mut hasher: Box<dyn digest::DynDigest> = match hash_type.to_lowercase().as_str() {
         "md5" => Box::new(md5::Md5::new()),
