@@ -4,41 +4,37 @@
 use md5;
 use std::env;
 use sha1::Sha1;
-use regex::Regex;
 use tiger::Tiger;
 use std::fs::File;
 use colored::Colorize;
-use std::io::{BufReader, Read};
+use std::io::Read;
 use sha2::{Sha224, Sha256, Sha384, Sha512, Digest};
 use ripemd::{Ripemd160, Ripemd320};
 
-fn identify_hash(hash: &String) -> String {
-    let hash_patterns = [
-        (r"^[a-f0-9]{32}$", "MD5"),     
-        (r"^[a-f0-9]{40}$", "SHA1"),
-        (r"^[a-f0-9]{48}$", "Tiger192"),
-        (r"^[a-f0-9]{56}$", "SHA224"),     
-        (r"^[a-f0-9]{64}$", "SHA256"),
-        (r"^[a-f0-9]{80}$", "RIPEMD320"),
-        (r"^[a-f0-9]{96}$", "SHA384"),   
-        (r"^[a-f0-9]{128}$", "SHA512"),  
-        (r"^[a-f0-9]{128}$", "BLAKE2b"),
-    ];
+const BUFFER_SIZE: usize = 1 << 20;
 
-    for (pattern, hash_type) in hash_patterns {
-        if Regex::new(pattern).unwrap().is_match(&hash) {
-            return hash_type.to_string();
-        }
+fn identify_hash(hash: &str) -> String {
+    if !hash.bytes().all(|b| matches!(b, b'0'..=b'9' | b'a'..=b'f')) {
+        return "Unknown".to_string();
     }
-
-    return "Unknown".to_string()
+    match hash.len() {
+        32 => "MD5",
+        40 => "SHA1",
+        48 => "Tiger192",
+        56 => "SHA224",
+        64 => "SHA256",
+        80 => "RIPEMD320",
+        96 => "SHA384",
+        128 => "SHA512",
+        _ => "Unknown",
+    }
+    .to_string()
 }
 
-
-fn calculate_hash(hash_type: &String, filepath: &String) -> Result<String, Box<dyn std::error::Error>> {
-    let file = File::open(filepath)?;
-    let mut reader = BufReader::new(file);
-    let mut buffer = [0; 1048576];
+fn calculate_hash(hash_type: &str, filepath: &str) -> Result<String, Box<dyn std::error::Error>> {
+    let mut file = File::open(filepath)?;
+    // Heap, not stack: a 1 MiB array overflows the 1 MiB Windows main-thread stack.
+    let mut buffer = vec![0u8; BUFFER_SIZE];
 
     let mut hasher: Box<dyn digest::DynDigest> = match hash_type.to_lowercase().as_str() {
         "md5" => Box::new(md5::Md5::new()),
@@ -54,15 +50,14 @@ fn calculate_hash(hash_type: &String, filepath: &String) -> Result<String, Box<d
     };
 
     loop {
-        let bytes_read = reader.read(&mut buffer)?;
+        let bytes_read = file.read(&mut buffer)?;
         if bytes_read == 0 {
             break;
         }
         hasher.update(&buffer[..bytes_read]);
     }
 
-    let result = hasher.finalize();
-    Ok(hex::encode(result))
+    Ok(hex::encode(hasher.finalize()))
 }
 
 fn main() {
@@ -111,5 +106,45 @@ fn main() {
             }
         },
         Err(e) => println!("{} {}", "Error calculating hash:".red(), e),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn temp_file(name: &str, data: &[u8]) -> String {
+        let path = env::temp_dir().join(name);
+        std::fs::write(&path, data).unwrap();
+        path.to_string_lossy().into_owned()
+    }
+
+    #[test]
+    fn identifies_hash_by_length() {
+        assert_eq!(identify_hash(&"a".repeat(32)), "MD5");
+        assert_eq!(identify_hash(&"0".repeat(64)), "SHA256");
+        assert_eq!(identify_hash(&"f".repeat(128)), "SHA512");
+        assert_eq!(identify_hash(&"A".repeat(32)), "Unknown");
+        assert_eq!(identify_hash(&"g".repeat(32)), "Unknown");
+        assert_eq!(identify_hash("abc"), "Unknown");
+    }
+
+    #[test]
+    fn hashes_known_vectors() {
+        let path = temp_file("checksum_test_abc", b"abc");
+        assert_eq!(calculate_hash("MD5", &path).unwrap(), "900150983cd24fb0d6963f7d28e17f72");
+        assert_eq!(calculate_hash("SHA1", &path).unwrap(), "a9993e364706816aba3e25717850c26c9cd0d89d");
+        assert_eq!(
+            calculate_hash("SHA256", &path).unwrap(),
+            "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+        );
+        assert!(calculate_hash("Unknown", &path).is_err());
+    }
+
+    #[test]
+    fn hashes_files_larger_than_buffer() {
+        let data: Vec<u8> = (0..BUFFER_SIZE * 3 + 7).map(|i| i as u8).collect();
+        let path = temp_file("checksum_test_big", &data);
+        assert_eq!(calculate_hash("SHA256", &path).unwrap(), hex::encode(Sha256::digest(&data)));
     }
 }
